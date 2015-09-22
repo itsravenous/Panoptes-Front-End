@@ -56,9 +56,12 @@ CollectionPage = React.createClass
               <Translate content="collectionPage.collaborators" />
             </Link>}
 
-          <Link to="collection-talk" params={params} className="tabbed-content-tab" style={pointerEvents: 'none', opacity: 0.7}>
-            <Translate content="collectionPage.talk" />
-          </Link>
+          <PromiseRenderer promise={@props.collection.get('project')}>{(project) =>
+            [owner, name] = project.slug.split('/')
+            <Link to="project-talk" params={{owner, name}} className="tabbed-content-tab">
+              <Translate content="collectionPage.talk" />
+            </Link>
+          }</PromiseRenderer>
         </nav>
         <div className="collection-container">
           <RouteHandler user={@props.user} collection={@props.collection} roles={@props.roles} />
