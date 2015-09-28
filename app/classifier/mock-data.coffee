@@ -15,6 +15,7 @@ workflow = apiClient.type('workflows').create
       {label: ':) Good'}
       {label: ':( Bad'}
     ]
+    help: 'Oh jeez I’m not really sure how to help you here...'
   }, {
     type: 'multiple'
     question: 'Anything else?'
