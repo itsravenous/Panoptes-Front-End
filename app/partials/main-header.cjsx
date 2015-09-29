@@ -28,24 +28,6 @@ module.exports = React.createClass
   getDefaultProps: ->
     user: null
 
-  componentDidMount: ->
-    if @checkIfOnHome() then document.addEventListener 'scroll', @onScroll
-    window.addEventListener 'locationchange', @onLocationChange
-
-  componentWillUnmount: ->
-    document.removeEventListener 'scroll', @onScroll
-    window.removeEventListener 'locationchange', @onLocationChange
-
-  onLocationChange: ->
-    if @checkIfOnHome()
-      document.addEventListener 'scroll', @onScroll
-    else
-     document.removeEventListener 'scroll', @onScroll
-     React.findDOMNode(@refs.mainTitle).classList.remove 'header-sticky'
-
-  checkIfOnHome: ->
-    return true if window.location is '/'
-
   render: ->
     <header className="main-header">
       <div className="main-title" ref="mainTitle">
@@ -89,12 +71,3 @@ module.exports = React.createClass
           <LoginBar />}
       </div>
     </header>
-
-  onScroll: ->
-    mainTitle = React.findDOMNode(@refs.mainTitle)
-
-    if window.scrollY >= 1
-      mainTitle.classList.add 'header-sticky'
-
-    if window.scrollY is 0
-      mainTitle.classList.remove 'header-sticky'
