@@ -14,7 +14,7 @@ module.exports = React.createClass
   displayName: 'MainNav'
 
   render: ->
-    <nav className="main-nav main-header-group">
+    <nav className="main-nav">
       <Link to="home" className="main-header-item logo">
         <ZooniverseLogo />&nbsp;<Translate content="nav.home" />
       </Link>
