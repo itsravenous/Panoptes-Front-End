@@ -3,7 +3,6 @@ BoardPreview = require './board-preview'
 ActiveUsers = require './active-users'
 talkClient = require '../api/talk'
 PromiseRenderer = require '../components/promise-renderer'
-HandlePropChanges = require '../lib/handle-prop-changes'
 Moderation = require './lib/moderation'
 ProjectLinker = require './lib/project-linker'
 ROLES = require './lib/roles'
@@ -20,22 +19,20 @@ AddZooTeamForm = require './add-zoo-team-form'
 store = require '../store'
 {connect} = require 'react-redux'
 
-mapStateToProps = (state) ->
-  boards: state.boards
-
 setBoards = (section) ->
   talkClient.type('boards').get({section}).then (boards) ->
     store.dispatch({type: 'BOARDS', boards})
 
+mapStateToProps = (state) ->
+  boards: state.boards
+
 module?.exports = connect(mapStateToProps) React.createClass
   displayName: 'TalkInit'
-  mixins: [HandlePropChanges]
 
   propTypes:
     section: React.PropTypes.string # 'zooniverse' for main-talk, 'project_id' for projects
-
-  propChangeHandlers:
-    'user': 'setBoards'
+    boards: React.PropTypes.array
+    loading: React.PropTypes.bool
 
   getInitialState: ->
     loading: false
@@ -49,13 +46,12 @@ module?.exports = connect(mapStateToProps) React.createClass
 
     sugarClient.subscribeTo('zooniverse') if @props.section is 'zooniverse'
 
+  componentWillReceiveProps: (nextProps) ->
+    if @props.user isnt @props.user
+      setBoards(@props.section)
+
   componentWillUnmount: ->
     sugarClient.unsubscribeFrom('zooniverse') if @props.section is 'zooniverse'
-
-  setBoards: (propValue, props = @props) ->
-    talkClient.type('boards').get(section: props.section)
-      .then (boards) =>
-        @setState {boards, loading: false}
 
   boardPreview: (data, i) ->
     <BoardPreview {...@props} key={i} data={data} />
@@ -77,7 +73,7 @@ module?.exports = connect(mapStateToProps) React.createClass
               {if @props.section isnt 'zooniverse'
                 <CreateSubjectDefaultButton
                   section={@props.section}
-                  onCreateBoard={=> @setBoards()} />
+                  onCreateBoard={=> setBoards(@props.section)} />
                 }
 
               <ZooniverseTeam user={@props.user} section={@props.section}>
@@ -97,7 +93,7 @@ module?.exports = connect(mapStateToProps) React.createClass
                 View Reported Comments
               </Link>
 
-              <CreateBoardForm section={@props.section} onSubmitBoard={=> @setBoards()}/>
+              <CreateBoardForm section={@props.section} onSubmitBoard={=> setBoards(@props.section)}/>
             </div>
             }
         </div>
