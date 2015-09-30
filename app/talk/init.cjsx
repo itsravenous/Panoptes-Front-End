@@ -13,7 +13,7 @@ CreateBoardForm = require './lib/create-board-form'
 Loading = require '../components/loading-indicator'
 PopularTags = require './popular-tags'
 require '../api/sugar'
-ZooniverseTeam = require './lib/zoo-team.cjsx'
+ZooniverseTeam = require './lib/zoo-team'
 alert = require '../lib/alert'
 AddZooTeamForm = require './add-zoo-team-form'
 
