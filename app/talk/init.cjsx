@@ -42,6 +42,8 @@ module?.exports = connect(mapStateToProps) React.createClass
   componentWillMount: ->
     console.log "@props of talk/init", @props
     store.dispatch({type: 'INCREMENT'}) # test store action
+    store.dispatch({type: 'BOARDZ'})
+
     sugarClient.subscribeTo('zooniverse') if @props.section is 'zooniverse'
 
   componentWillUnmount: ->
