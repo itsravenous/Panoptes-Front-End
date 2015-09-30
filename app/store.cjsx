@@ -1,8 +1,10 @@
-{createStore, combineReducers} = require 'redux'
-
+{createStore, combineReducers, applyMiddleware} = require 'redux'
+thunk = require 'redux-thunk'
 reducers = require './reducers'
 
-store = createStore(combineReducers(reducers))
+createStoreWithMiddleware = applyMiddleware(thunk)(createStore)
+
+store = createStoreWithMiddleware(combineReducers(reducers))
 
 store.subscribe(=> console.log(store.getState()))
 

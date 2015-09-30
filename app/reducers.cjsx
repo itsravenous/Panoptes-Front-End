@@ -8,9 +8,9 @@ module?.exports =
       else
         store
 
-  boardz: (store = [], action) ->
+  boards: (store = [], action) ->
     switch (action.type)
-      when 'BOARDZ'
-        [{id: 1, name: 'test boardz'}]
+      when 'BOARDS'
+        action.boards
       else
         store
