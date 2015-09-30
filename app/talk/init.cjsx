@@ -18,8 +18,9 @@ alert = require '../lib/alert'
 AddZooTeamForm = require './add-zoo-team-form'
 
 store = require '../store'
+{connect} = require 'react-redux'
 
-module?.exports = React.createClass
+module?.exports = connect() React.createClass
   displayName: 'TalkInit'
   mixins: [HandlePropChanges]
 
@@ -36,8 +37,8 @@ module?.exports = React.createClass
     moderationOpen: false
 
   componentWillMount: ->
+    console.log "@props of talk/init", @props
     store.dispatch({type: 'INCREMENT'}) # test store action
-
     sugarClient.subscribeTo('zooniverse') if @props.section is 'zooniverse'
 
   componentWillUnmount: ->
