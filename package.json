@@ -17,8 +17,10 @@
     "papaparse": "mholt/PapaParse#cada171",
     "react": "~0.13.2",
     "react-interpolate-component": "~0.7.1",
+    "react-redux": "^3.0.1",
     "react-select": "marten/react-select#close-after-click",
     "react-translate-component": "~0.9.0",
+    "redux": "^3.0.2",
     "sugar-client": "^1.0.1",
     "tether": "HubSpot/tether#df8cd44"
   },
@@ -34,6 +36,7 @@
     "nib": "~1.1.0",
     "node-static": "~0.7.7",
     "publisssh": "~1.0.0",
+    "redux-devtools": "^2.1.5",
     "stylus": "~0.52.0",
     "tap-spec": "~4.0.2",
     "testling": "~1.7.1",
