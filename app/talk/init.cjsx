@@ -17,6 +17,8 @@ ZooniverseTeam = require './lib/zoo-team.cjsx'
 alert = require '../lib/alert'
 AddZooTeamForm = require './add-zoo-team-form'
 
+store = require '../store'
+
 module?.exports = React.createClass
   displayName: 'TalkInit'
   mixins: [HandlePropChanges]
@@ -34,6 +36,8 @@ module?.exports = React.createClass
     moderationOpen: false
 
   componentWillMount: ->
+    store.dispatch({type: 'INCREMENT'}) # test store action
+
     sugarClient.subscribeTo('zooniverse') if @props.section is 'zooniverse'
 
   componentWillUnmount: ->
