@@ -15,32 +15,44 @@ QuickSubjectCommentForm= require '../talk/quick-subject-comment-form'
 alert = require '../lib/alert'
 SignInPrompt = require '../partials/sign-in-prompt'
 
+store = require '../store'
+{get} = require '../actions'
+{connect} = require 'react-redux'
+
 indexOf = (elem) ->
   (elem while elem = elem.previousSibling).length
 
 promptToSignIn = ->
   alert (resolve) -> <SignInPrompt onChoose={resolve} />
 
-module?.exports = React.createClass
+mapStateToProps = (state) ->
+  subjects: state.subjects
+  comments: state.comments
+
+module?.exports = connect(mapStateToProps) React.createClass
   displayName: 'Subject'
   mixins: [Navigation]
 
   getInitialState: ->
-    subject: null
     tab: 0
 
   componentWillMount: ->
-    @setSubject()
+    @dispatchSubjects()
+    .then ({subjects}) => @dispatchComments(subjects[0])
 
   componentWillReceiveProps: (nextProps) ->
     if nextProps.params?.id isnt @props.params?.id
-      @setSubject()
+      @dispatchSubjects()
 
-  setSubject: ->
-    subjectId = @props.params?.id.toString()
-    apiClient.type('subjects').get(subjectId)
-      .then (subject) =>
-        @setState {subject}
+  dispatchSubjects: ->
+    id = @props.params?.id.toString()
+    store.dispatch(get({type: 'api/subjects', params: {id}}))
+
+  dispatchComments: (subject) ->
+    store.dispatch(get({
+      type: 'talk/comments',
+      params: {focus_id: subject.id, focus_type: 'Subject'}
+    }))
 
   comment: (data, i) ->
     <CommentLink key={data.id} comment={data}>
@@ -62,7 +74,8 @@ module?.exports = React.createClass
     <Link to="project-classify" params={{owner, name}}>{text}</Link>
 
   render: ->
-    {subject} = @state
+    subject = @props.subjects[0]
+    {comments} = @props
 
     <div className="subject-page talk">
       {if subject
@@ -71,15 +84,13 @@ module?.exports = React.createClass
 
           <SubjectViewer subject={subject} user={@props.user} project={@props.project}/>
 
-          <PromiseRenderer promise={talkClient.type('comments').get({focus_id: subject.id, focus_type: 'Subject'})}>{(comments) =>
-            if comments.length
-              <div>
-                <h2>Comments mentioning this subject:</h2>
-                <div>{comments.map(@comment)}</div>
-              </div>
-            else
-              <p>There are no comments focused on this subject</p>
-          }</PromiseRenderer>
+          {if comments.length
+            <div>
+              <h2>Comments mentioning this subject:</h2>
+              <div>{comments.map(@comment)}</div>
+            </div>
+          else
+            <p>There are no comments focused on this subject</p>}
 
           {if @props.user
             {# TODO remove subject.get('project'), replace with params but browser freezes on get to projects with slug}

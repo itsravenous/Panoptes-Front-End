@@ -15,7 +15,7 @@ module?.exports =
       [clientName, resource] = action.type.split('/')
 
       client(clientName).type(resource).get(action.params)
-        .then (response) =>
+        .then (response) ->
           dispatch({type: resource, "#{resource}": response})
 
   post: (action) ->

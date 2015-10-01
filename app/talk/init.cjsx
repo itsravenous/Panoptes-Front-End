@@ -105,7 +105,7 @@ module?.exports = connect(mapStateToProps) React.createClass
            else if @props.boards?.length is 0
             <p>There are currently no boards.</p>
            else if @props.boards?.length
-             @props.boards.map(@boardPreview)} 
+             @props.boards.map(@boardPreview)}
         </section>
 
         <div className="talk-sidebar">

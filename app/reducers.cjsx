@@ -14,3 +14,18 @@ module?.exports =
         action.boards
       else
         store
+
+  subjects: (store = [], action) ->
+    switch (action.type)
+      when 'subjects'
+        action.subjects
+      else
+        store
+
+  comments: (store = [], action) ->
+    switch (action.type)
+      when 'comments'
+        action.comments
+      else
+        store
+
