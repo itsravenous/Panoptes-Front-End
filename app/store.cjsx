@@ -6,6 +6,8 @@ createStoreWithMiddleware = applyMiddleware(thunk)(createStore)
 
 store = createStoreWithMiddleware(combineReducers(reducers))
 
+# store = createStoreWithMiddleware(reducers)
+
 store.subscribe(=> console.log(store.getState()))
 
 store.dispatch({type: 'INCREMENT'})
