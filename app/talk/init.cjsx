@@ -43,7 +43,7 @@ module?.exports = connect(mapStateToProps) React.createClass
     @dispatchBoards()
 
   dispatchBoards: ->
-    store.dispatch(get({type: 'boards', params: {section: @props.section}}))
+    store.dispatch(get({type: 'talk/boards', params: {section: @props.section}}))
 
   componentWillReceiveProps: (nextProps) ->
     if @props.user isnt @props.user
