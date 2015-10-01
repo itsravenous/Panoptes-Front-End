@@ -10,7 +10,7 @@ module?.exports =
 
   boards: (store = [], action) ->
     switch (action.type)
-      when 'BOARDS'
+      when 'boards'
         action.boards
       else
         store

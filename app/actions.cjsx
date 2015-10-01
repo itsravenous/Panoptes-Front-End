@@ -3,9 +3,9 @@
 module?.exports = 
   get: (action) ->
     (dispatch) ->
-      talkClient.type('boards').get(section: 'zooniverse')
-        .then (boards) =>
-          dispatch({type: 'BOARDS', boards})
+      talkClient.type(action.type).get(action.params)
+        .then (resources) =>
+          dispatch({type: action.type, "#{action.type}": resources})
 
   post: (action) ->
 
