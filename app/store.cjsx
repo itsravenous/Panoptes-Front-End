@@ -10,8 +10,4 @@ store = createStoreWithMiddleware(combineReducers(reducers))
 
 store.subscribe(=> console.log(store.getState()))
 
-store.dispatch({type: 'INCREMENT'})
-store.dispatch({type: 'INCREMENT'})
-store.dispatch({type: 'DECREMENT'})
-
 module?.exports = window.store = store

@@ -36,8 +36,6 @@ module?.exports = connect(mapStateToProps) React.createClass
     moderationOpen: false
 
   componentWillMount: ->
-    store.dispatch({type: 'INCREMENT'}) # test store action
-
     sugarClient.subscribeTo('zooniverse') if @props.section is 'zooniverse'
 
     @dispatchBoards()
