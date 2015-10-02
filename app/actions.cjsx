@@ -29,12 +29,18 @@ module?.exports =
           dispatch({type: resource, "#{resource}": resourcesObj})
 
   update: (action) ->
-    (dispatch) =>
+    (dispatch) ->
       [clientName, resource] = action.type.split('/')
 
-      client(clientName).type(resource).get(action.id.toString()).update(action.params).save()
+      client(clientName).type(resource).get(action.id).update(action.params).save()
         .then (response) ->
           updatedResource = response
           dispatch({type: resource, "#{resource}": updatedResource})
 
-  delete: (action) ->
+  destroy: (action) ->
+    (dispatch) ->
+      [clientName, resource] = action.type.split('/')
+      client(clientName).type(resource).get(action.id).delete()
+        .then (response) ->
+          console.log "response", response # TODO: delete record from store
+          # dispatch({type: resource, "#{resource}": response})

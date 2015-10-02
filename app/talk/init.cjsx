@@ -91,7 +91,7 @@ module?.exports = connect(mapStateToProps) React.createClass
                 View Reported Comments
               </Link>
 
-              <CreateBoardForm section={@props.section} onSubmitBoard={=> setBoards(@props.section)}/>
+              <CreateBoardForm section={@props.section} onSubmitBoard={@dispatchBoards}/>
             </div>
             }
         </div>

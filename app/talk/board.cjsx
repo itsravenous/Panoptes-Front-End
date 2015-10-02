@@ -18,7 +18,7 @@ talkConfig = require './config'
 SignInPrompt = require '../partials/sign-in-prompt'
 alert = require '../lib/alert'
 store = require '../store'
-{get, update} = require '../actions'
+{get, update, destroy} = require '../actions'
 {connect} = require 'react-redux'
 
 promptToSignIn = -> alert (resolve) -> <SignInPrompt onChoose={resolve} />
@@ -85,11 +85,11 @@ module?.exports = connect(mapStateToProps) React.createClass
     if window.confirm("Are you sure that you want to delete this board? All of the comments and discussions will be lost forever.")
       {owner, name} = @props.params
       if @board().section is 'zooniverse'
-        @boardRequest().delete()
+        store.dispatch(destroy({type: 'talk/boards', id: @props.params.board}))
           .then =>
             @transitionTo('talk')
       else
-        @boardRequest().delete()
+        store.dispatch(destroy({type: 'talk/boards', id: @props.params.board}))
           .then =>
             @transitionTo('project-talk', {owner: owner, name: name})
 
