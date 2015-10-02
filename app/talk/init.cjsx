@@ -55,7 +55,6 @@ module?.exports = connect(mapStateToProps) React.createClass
 
   render: ->
     boards = @props.boards.current?.map (id) => @props.boards[id]
-    console.log "boards", boards
 
     <div className="talk-home">
       {if @props.user?
