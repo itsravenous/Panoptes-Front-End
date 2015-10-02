@@ -1,7 +1,6 @@
 React = require 'react'
 {Link} = require '@edpaget/react-router'
 DiscussionPreview = require './discussion-preview'
-talkClient = require '../api/talk'
 CommentBox = require './comment-box'
 commentValidations = require './lib/comment-validations'
 discussionValidations = require './lib/discussion-validations'
@@ -70,10 +69,6 @@ module?.exports = connect(mapStateToProps) React.createClass
       }
     }))
     
-  boardRequest: ->
-    id = @props.params.board.toString()
-    talkClient.type('boards').get(id)
-
   onCreateDiscussion: ->
     @setState newDiscussionOpen: false
     @dispatchDiscussions()
