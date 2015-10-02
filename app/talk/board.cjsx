@@ -17,12 +17,18 @@ merge = require 'lodash.merge'
 talkConfig = require './config'
 SignInPrompt = require '../partials/sign-in-prompt'
 alert = require '../lib/alert'
+store = require '../store'
+{get} = require '../actions'
+{connect} = require 'react-redux'
 
 promptToSignIn = -> alert (resolve) -> <SignInPrompt onChoose={resolve} />
 
 PAGE_SIZE = talkConfig.boardPageSize
 
-module?.exports = React.createClass
+mapStateToProps = (state) ->
+  discussions: state.discussions
+
+module?.exports = connect(mapStateToProps) React.createClass
   displayName: 'TalkBoard'
   mixins: [Router.Navigation]
 
@@ -31,7 +37,7 @@ module?.exports = React.createClass
     board: {}
     discussionsMeta: {}
     newDiscussionOpen: false
-    loading: true
+    loading: false
     moderationOpen: false
 
   getDefaultProps: ->
@@ -39,22 +45,26 @@ module?.exports = React.createClass
 
   componentWillReceiveProps: (nextProps) ->
     unless nextProps.query.page is @props.query.page
-      @setDiscussions(nextProps.query.page ? 1)
+      @dispatchDiscussions(nextProps.query.page ? 1)
 
   componentWillMount: ->
-    @setDiscussions(@props.query.page ? 1)
+    @dispatchDiscussions(@props.query.page ? 1)
     @setBoard()
+
+  dispatchDiscussions: (page) ->
+    store.dispatch(get({
+      type: 'talk/discussions',
+      params: {
+        board_id: @props.params.board,
+        page_size: PAGE_SIZE,
+        page: page
+      }
+    }))
 
   discussionsRequest: (page) ->
     @setState loading: true
     board_id = +@props.params.board
     talkClient.type('discussions').get({board_id, page_size: PAGE_SIZE, page})
-
-  setDiscussions: (page = @props.query.page) ->
-    @discussionsRequest(page)
-      .then (discussions) =>
-        discussionsMeta = discussions[0]?.getMeta()
-        @setState {discussions, discussionsMeta, loading: false}
 
   boardRequest: ->
     id = @props.params.board.toString()
@@ -66,7 +76,7 @@ module?.exports = React.createClass
 
   onCreateDiscussion: ->
     @setState newDiscussionOpen: false
-    @setDiscussions()
+    @dispatchDiscussions()
 
   discussionPreview: (discussion, i) ->
     <DiscussionPreview {...@props} key={i} discussion={discussion} />
@@ -132,6 +142,7 @@ module?.exports = React.createClass
 
   render: ->
     {board} = @state
+    discussions = @props.discussions.current?.map (id) => @props.discussions[id]
 
     <div className="talk-board">
       <h1 className="talk-page-header">{board?.title}</h1>
@@ -205,8 +216,8 @@ module?.exports = React.createClass
         <section>
           {if @state.loading
             <Loading />
-           else if @state.discussions?.length
-            @state.discussions.map(@discussionPreview)
+           else if discussions?.length
+            discussions.map(@discussionPreview)
            else
             <p>There are currently no discussions in this board.</p>}
         </section>
@@ -232,5 +243,5 @@ module?.exports = React.createClass
         </div>
       </div>
 
-      <Paginator page={+@state.discussionsMeta?.page} pageCount={@state.discussionsMeta?.page_count} />
+      <Paginator page={+@props.discussions.meta?.page} pageCount={@props.discussions.meta?.page_count} />
     </div>

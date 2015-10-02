@@ -20,3 +20,10 @@ module?.exports =
       else
         store
 
+  discussions: (store = {}, action) ->
+    switch (action.type)
+      when 'discussions'
+        Object.assign {}, store, action.discussions
+      else
+        store
+
