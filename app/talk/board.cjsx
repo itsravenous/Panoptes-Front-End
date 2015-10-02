@@ -18,7 +18,7 @@ talkConfig = require './config'
 SignInPrompt = require '../partials/sign-in-prompt'
 alert = require '../lib/alert'
 store = require '../store'
-{get} = require '../actions'
+{get, update} = require '../actions'
 {connect} = require 'react-redux'
 
 promptToSignIn = -> alert (resolve) -> <SignInPrompt onChoose={resolve} />
@@ -27,6 +27,7 @@ PAGE_SIZE = talkConfig.boardPageSize
 
 mapStateToProps = (state) ->
   discussions: state.discussions
+  boards: state.boards
 
 module?.exports = connect(mapStateToProps) React.createClass
   displayName: 'TalkBoard'
@@ -49,7 +50,7 @@ module?.exports = connect(mapStateToProps) React.createClass
 
   componentWillMount: ->
     @dispatchDiscussions(@props.query.page ? 1)
-    @setBoard()
+    @dispatchBoards()
 
   dispatchDiscussions: (page) ->
     store.dispatch(get({
@@ -61,18 +62,17 @@ module?.exports = connect(mapStateToProps) React.createClass
       }
     }))
 
-  discussionsRequest: (page) ->
-    @setState loading: true
-    board_id = +@props.params.board
-    talkClient.type('discussions').get({board_id, page_size: PAGE_SIZE, page})
-
+  dispatchBoards: ->
+    store.dispatch(get({
+      type: 'talk/boards',
+      params: {
+        id: @props.params.board
+      }
+    }))
+    
   boardRequest: ->
     id = @props.params.board.toString()
     talkClient.type('boards').get(id)
-
-  setBoard: ->
-    @boardRequest()
-      .then (board) => @setState {board}
 
   onCreateDiscussion: ->
     @setState newDiscussionOpen: false
@@ -84,7 +84,7 @@ module?.exports = connect(mapStateToProps) React.createClass
   onClickDeleteBoard: ->
     if window.confirm("Are you sure that you want to delete this board? All of the comments and discussions will be lost forever.")
       {owner, name} = @props.params
-      if @state.board.section is 'zooniverse'
+      if @board().section is 'zooniverse'
         @boardRequest().delete()
           .then =>
             @transitionTo('talk')
@@ -108,8 +108,11 @@ module?.exports = connect(mapStateToProps) React.createClass
     permissions = {read, write}
     board = {title, permissions, description}
 
-    @boardRequest().update(board).save()
-      .then (board) => @setState {board}
+    store.dispatch(update({
+      type: 'talk/boards',
+      id: @props.params.board
+      params: board
+    }))
 
   onClickNewDiscussion: ->
     @setState newDiscussionOpen: !@state.newDiscussionOpen
@@ -120,10 +123,10 @@ module?.exports = connect(mapStateToProps) React.createClass
         type="radio"
         name="role-read"
         onChange={=>
-          @setState board: merge {}, @state.board, {permissions: read: data}
+          @setState board: merge {}, @board(), {permissions: read: data}
         }
         value={data}
-        checked={@state.board.permissions.read is data}/>
+        checked={@board().permissions.read is data}/>
       {data}
     </label>
 
@@ -133,15 +136,18 @@ module?.exports = connect(mapStateToProps) React.createClass
         type="radio"
         name="role-write"
         onChange={=>
-          @setState board: merge {}, @state.board, {permissions: write: data}
+          @setState board: merge {}, @board(), {permissions: write: data}
         }
-        checked={@state.board.permissions.write is data}
+        checked={@board().permissions.write is data}
         value={data}/>
       {data}
     </label>
 
+  board: ->
+    @props.boards[@props.params.board]
+
   render: ->
-    {board} = @state
+    board = @props.boards[@props.params.board]
     discussions = @props.discussions.current?.map (id) => @props.discussions[id]
 
     <div className="talk-board">

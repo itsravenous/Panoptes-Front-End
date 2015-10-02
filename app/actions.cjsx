@@ -28,8 +28,13 @@ module?.exports =
 
           dispatch({type: resource, "#{resource}": resourcesObj})
 
-  post: (action) ->
+  update: (action) ->
+    (dispatch) =>
+      [clientName, resource] = action.type.split('/')
 
-  patch: (action) ->
+      client(clientName).type(resource).get(action.id.toString()).update(action.params).save()
+        .then (response) ->
+          updatedResource = response
+          dispatch({type: resource, "#{resource}": updatedResource})
 
   delete: (action) ->
