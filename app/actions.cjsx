@@ -9,14 +9,24 @@ client = (clientName) ->
     else
       throw new Error("Client must be one of: ['talk', 'api']")
 
-module?.exports = 
+module?.exports =
   get: (action) ->
     (dispatch) ->
       [clientName, resource] = action.type.split('/')
 
       client(clientName).type(resource).get(action.params)
         .then (response) ->
-          dispatch({type: resource, "#{resource}": response})
+
+          resourcesObj = response.reduce((resourcesObj, resource) =>
+            resourcesObj[resource.id] = resource
+            resourcesObj['meta'] = resource.getMeta()
+            resourcesObj['current'] = resourcesObj['current'].concat(resource.id)
+            resourcesObj
+          , {current: []})
+
+          # console.log "resourcesObj", resourcesObj
+
+          dispatch({type: resource, "#{resource}": resourcesObj})
 
   post: (action) ->
 

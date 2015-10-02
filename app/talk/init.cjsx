@@ -56,6 +56,9 @@ module?.exports = connect(mapStateToProps) React.createClass
     <BoardPreview {...@props} key={i} data={data} />
 
   render: ->
+    boards = @props.boards.current?.map (id) => @props.boards[id]
+    console.log "boards", boards
+
     <div className="talk-home">
       {if @props.user?
         <div className="talk-moderation">
@@ -102,10 +105,10 @@ module?.exports = connect(mapStateToProps) React.createClass
         <section>
           {if @state.loading
             <Loading />
-           else if @props.boards?.length is 0
+           else if boards?.length is 0
             <p>There are currently no boards.</p>
-           else if @props.boards?.length
-             @props.boards.map(@boardPreview)}
+           else if boards?.length
+             boards.map(@boardPreview)}
         </section>
 
         <div className="talk-sidebar">

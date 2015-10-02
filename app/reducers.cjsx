@@ -8,24 +8,24 @@ module?.exports =
       else
         store
 
-  boards: (store = [], action) ->
+  boards: (store = {}, action) ->
     switch (action.type)
       when 'boards'
-        action.boards
+        Object.assign {}, store, action.boards
       else
         store
 
-  subjects: (store = [], action) ->
+  subjects: (store = {}, action) ->
     switch (action.type)
       when 'subjects'
-        action.subjects
+        Object.assign {}, store, action.subjects
       else
         store
 
-  comments: (store = [], action) ->
+  comments: (store = {}, action) ->
     switch (action.type)
       when 'comments'
-        action.comments
+        Object.assign {}, store, action.comments
       else
         store
 

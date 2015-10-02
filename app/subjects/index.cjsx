@@ -9,12 +9,11 @@ NewDiscussionForm = require '../talk/discussion-new-form'
 CommentLink = require '../talk/comment-link'
 projectSection = require '../talk/lib/project-section'
 parseSection = require '../talk/lib/parse-section'
-QuickSubjectCommentForm= require '../talk/quick-subject-comment-form'
+QuickSubjectCommentForm = require '../talk/quick-subject-comment-form'
 {Navigation, Link} = require '@edpaget/react-router'
 {Markdown} = require 'markdownz'
 alert = require '../lib/alert'
 SignInPrompt = require '../partials/sign-in-prompt'
-
 store = require '../store'
 {get} = require '../actions'
 {connect} = require 'react-redux'
@@ -38,7 +37,7 @@ module?.exports = connect(mapStateToProps) React.createClass
 
   componentWillMount: ->
     @dispatchSubjects()
-    .then ({subjects}) => @dispatchComments(subjects[0])
+    @dispatchComments(@props.params?.id)
 
   componentWillReceiveProps: (nextProps) ->
     if nextProps.params?.id isnt @props.params?.id
@@ -48,10 +47,10 @@ module?.exports = connect(mapStateToProps) React.createClass
     id = @props.params?.id.toString()
     store.dispatch(get({type: 'api/subjects', params: {id}}))
 
-  dispatchComments: (subject) ->
+  dispatchComments: (subjectId) ->
     store.dispatch(get({
       type: 'talk/comments',
-      params: {focus_id: subject.id, focus_type: 'Subject'}
+      params: {focus_id: subjectId, focus_type: 'Subject'}
     }))
 
   comment: (data, i) ->
@@ -74,8 +73,8 @@ module?.exports = connect(mapStateToProps) React.createClass
     <Link to="project-classify" params={{owner, name}}>{text}</Link>
 
   render: ->
-    subject = @props.subjects[0]
-    {comments} = @props
+    subject = @props.subjects[@props.params?.id]
+    comments = @props.comments.current?.map (id) => @props.comments[id]
 
     <div className="subject-page talk">
       {if subject
