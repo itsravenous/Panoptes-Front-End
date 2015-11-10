@@ -72,15 +72,18 @@ Classifier = React.createClass
       window.classification = currentClassification
 
       <div className="classifier">
-        <SubjectAnnotator
-          user={@props.user}
-          project={@props.project}
-          subject={@props.subject}
-          workflow={@props.workflow}
-          classification={currentClassification}
-          annotation={currentAnnotation}
-          onLoad={@handleSubjectImageLoad}
-        />
+        {for i in [0...@props.subject.locations.length]
+          <SubjectAnnotator
+            user={@props.user}
+            project={@props.project}
+            subject={@props.subject}
+            workflow={@props.workflow}
+            classification={currentClassification}
+            annotation={currentAnnotation}
+            onLoad={@handleSubjectImageLoad}
+            frame={i}
+          />
+          }
 
         <div className="task-area">
           {if currentTask?

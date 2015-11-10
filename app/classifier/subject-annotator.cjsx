@@ -21,7 +21,7 @@ module.exports = React.createClass
     onLoad: Function.prototype
 
   getInitialState: ->
-    frame: 0
+    frame: @props.frame ? 0
     naturalWidth: 0
     naturalHeight: 0
     showWarning: false
