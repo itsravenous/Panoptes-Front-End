@@ -42,6 +42,7 @@ module.exports = React.createClass
     defaultStyle: true
     project: null
     linkToFullImage: false
+    showFrameControls: true
 
   getInitialState: ->
     loading: true
@@ -61,7 +62,7 @@ module.exports = React.createClass
 
     tools = switch type
       when 'image'
-        if @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
+        if !@props.showFrameControls or @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
           null
         else
           <span className="subject-frame-play-controls">
@@ -89,7 +90,7 @@ module.exports = React.createClass
 
       <div className="subject-tools">
         <span>{tools}</span>
-        {if @props.subject?.locations.length >= 2
+        {if @props.subject?.locations.length >= 2 and @props.showFrameControls
           <span>
             <span className="subject-frame-pips">
               {for i in [0...@props.subject?.locations.length ? 0]

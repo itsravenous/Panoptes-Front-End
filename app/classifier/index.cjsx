@@ -31,6 +31,7 @@ Classifier = React.createClass
     subjectLoading: false
     showingExpertClassification: false
     selectedExpertAnnotation: -1
+    inFlipbookMode: true
 
   componentDidMount: ->
     @loadSubject @props.subject
@@ -59,6 +60,8 @@ Classifier = React.createClass
       @addAnnotationForTask classification, @props.workflow.first_task
 
   render: ->
+    isMultiImage = @props.subject.locations.length > 1
+    numAnnotators = if isMultiImage and !@state.inFlipbookMode then @props.subject.locations.length else 1
     <ChangeListener target={@props.classification}>{=>
       if @state.showingExpertClassification
         currentClassification = @props.subject.expert_classification_data
@@ -72,18 +75,29 @@ Classifier = React.createClass
       window.classification = currentClassification
 
       <div className="classifier">
-        {for i in [0...@props.subject.locations.length]
-          <SubjectAnnotator
-            user={@props.user}
-            project={@props.project}
-            subject={@props.subject}
-            workflow={@props.workflow}
-            classification={currentClassification}
-            annotation={currentAnnotation}
-            onLoad={@handleSubjectImageLoad}
-            frame={i}
-          />
+        <div>
+          {if isMultiImage
+            <div className="flipbook-toggle">
+              <input id="classifier-flipbook-toggle" type="checkbox" onChange={@handleToggleFlipbook} defaultChecked={@state.inFlipbookMode} />
+              <label htmlFor="classifier-flipbook-toggle">Flipbook mode</label>
+            </div>
           }
+          <div className="annotators">
+            {for i in [0...numAnnotators]
+              <SubjectAnnotator
+                user={@props.user}
+                project={@props.project}
+                subject={@props.subject}
+                workflow={@props.workflow}
+                classification={currentClassification}
+                annotation={currentAnnotation}
+                onLoad={@handleSubjectImageLoad}
+                frame={i}
+                showFrameControls={@state.inFlipbookMode}
+              />
+              }
+          </div>
+        </div>
 
         <div className="task-area">
           {if currentTask?
@@ -249,6 +263,11 @@ Classifier = React.createClass
     changes = {}
     changes["metadata.subject_dimensions.#{frameIndex}"] = {naturalWidth, naturalHeight, clientWidth, clientHeight}
     @props.classification.update changes
+
+  # Switch between flipbook and multi-frame mode when checkbox toggled
+  handleToggleFlipbook: (e) ->
+    @setState
+      inFlipbookMode: e.target.checked
 
   # This is passed as a generic change handler to the tasks
   updateAnnotations: ->

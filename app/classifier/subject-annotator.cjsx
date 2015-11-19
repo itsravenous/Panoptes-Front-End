@@ -19,6 +19,7 @@ module.exports = React.createClass
     classification: null
     annotation: null
     onLoad: Function.prototype
+    showFrameControls: true
 
   getInitialState: ->
     frame: @props.frame ? 0
@@ -108,7 +109,7 @@ module.exports = React.createClass
       {if BeforeSubject?
         <BeforeSubject {...hookProps} />}
 
-      <SubjectViewer user={@props.user} project={@props.project} subject={@props.subject} frame={@state.frame} onLoad={@handleSubjectFrameLoad} onFrameChange={@handleFrameChange}>
+      <SubjectViewer user={@props.user} project={@props.project} subject={@props.subject} frame={@state.frame} onLoad={@handleSubjectFrameLoad} onFrameChange={@handleFrameChange} showFrameControls={@props.showFrameControls}>
         <svg style={Object.assign {}, SubjectViewer.overlayStyle, svgStyle} viewBox="0 0 #{@state.naturalWidth} #{@state.naturalHeight}" {...svgProps}>
           <rect ref="sizeRect" width={@state.naturalWidth} height={@state.naturalHeight} fill="rgba(0, 0, 0, 0.01)" fillOpacity="0.01" stroke="none" />
 
