@@ -60,6 +60,7 @@ Classifier = React.createClass
       @addAnnotationForTask classification, @props.workflow.first_task
 
   render: ->
+    @props.workflow.config = {multi_image_layout: 'grid2'} # Mocking config object until added to Panoptes
     isMultiImage = @props.subject.locations.length > 1
     numAnnotators = if isMultiImage and !@state.inFlipbookMode then @props.subject.locations.length else 1
     <ChangeListener target={@props.classification}>{=>
@@ -74,15 +75,15 @@ Classifier = React.createClass
       # This is just easy access for debugging.
       window.classification = currentClassification
 
-      <div className="classifier">
-        <div>
+      <div className={"classifier classifier--"+@props.workflow.config.multi_image_layout}>
+        <div className="annotation-area">
           {if isMultiImage
             <div className="flipbook-toggle">
               <input id="classifier-flipbook-toggle" type="checkbox" onChange={@handleToggleFlipbook} defaultChecked={@state.inFlipbookMode} />
               <label htmlFor="classifier-flipbook-toggle">Flipbook mode</label>
             </div>
           }
-          <div className="annotators">
+          <div className={"annotators"}>
             {for i in [0...numAnnotators]
               <SubjectAnnotator
                 user={@props.user}

@@ -4,13 +4,31 @@
 
   @media (max-width: 900px) // This is between iPad landscape and portrait.
     flex-wrap: wrap
-    > .flipbook-toggle
-      width: 100%
+
+  // Layout variants for multi-image subjects
+  .annotators
+    display: flex
+    flex-wrap: wrap
+    .subject-area
+      flex: 1
+
+  &.classifier--grid2
+    .annotators
+      .subject-area
+        min-width: 47%;
+
+  &.classifier--grid3
+    .annotators
+      .subject-area
+        min-width: 31%;
+
+  &.classifier--row
+    flex-wrap: nowrap
 
   > .flipbook-toggle
     padding: 1em 0
 
-  > .subject-area
+  .subject-area
     align-items: center
     display: flex
     flex-shrink: 1
