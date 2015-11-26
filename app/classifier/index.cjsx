@@ -1,6 +1,8 @@
 React = require 'react'
 ChangeListener = require '../components/change-listener'
 SubjectAnnotator = require './subject-annotator'
+FrameAnnotator = require './frame-annotator'
+SubjectViewer = require '../components/subject-viewer'
 ClassificationSummary = require './classification-summary'
 {Link} = require '@edpaget/react-router'
 tasks = require './tasks'
@@ -72,7 +74,7 @@ Classifier = React.createClass
       window.classification = currentClassification
 
       <div className="classifier">
-        <SubjectAnnotator
+        <SubjectViewer
           user={@props.user}
           project={@props.project}
           subject={@props.subject}
@@ -80,6 +82,7 @@ Classifier = React.createClass
           classification={currentClassification}
           annotation={currentAnnotation}
           onLoad={@handleSubjectImageLoad}
+          frameWrapper={FrameAnnotator}
         />
 
         <div className="task-area">
