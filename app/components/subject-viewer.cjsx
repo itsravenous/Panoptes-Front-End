@@ -50,6 +50,7 @@ module.exports = React.createClass
     playing: false
     frame: @props.frame ? 0
     frameDimensions: {}
+    inFlipbookMode: false
     playbackRate: 1
 
   componentDidMount: ->
@@ -61,14 +62,6 @@ module.exports = React.createClass
   render: ->
     FrameWrapper = @props.frameWrapper
 
-    mainDisplay = switch type
-      when 'image'
-        <img className="subject" src={src} style={SUBJECT_STYLE} onLoad={@handleLoad} />
-      when 'video'
-        <video ref="videoPlayer" src={src} type={"#{type}/#{format}"} onCanPlayThrough={@handleLoad} onEnded={@endVideo} onTimeUpdate={@updateScrubber}>
-          Your browser does not support the video format. Please upgrade your browser.
-        </video>
-=======
     mainDisplay = for frame of @props.subject.locations
       {type, format, src} = getSubjectLocation @props.subject, frame
 
@@ -83,11 +76,21 @@ module.exports = React.createClass
       <FrameWrapper frame={frame} naturalWidth={@state.frameDimensions[src]?.width} naturalHeight={@state.frameDimensions[src]?.height} workflow={@props.workflow} subject={@props.subject} classification={@props.classification} annotation={@props.annotation}>
         {frameDisplay}
       </FrameWrapper>
->>>>>>> Add FrameAnnotator component
+
+  render: ->
+    mainDisplay = ''
+    if @state.inFlipbookMode
+      {type, format, src} = getSubjectLocation @props.subject, @state.frame
+      mainDisplay = @renderFrame type, format, src, @state.frame
+    else
+      mainDisplay = for frame of @props.subject.locations
+        {type, format, src} = getSubjectLocation @props.subject, frame
+        @renderFrame type, format, src, frame
+>>>>>>> Toggle flipbook mode via @state.inFlipbookMode #1901
 
     tools = switch type
       when 'image'
-        if @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
+        if not @state.inFlipbookMode or @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
           null
         else
           <span className="subject-frame-play-controls">
@@ -163,6 +166,17 @@ module.exports = React.createClass
       </div>
     </div>
 
+  renderFrame: (type, format, src, frame) ->
+    FrameWrapper = @props.frameWrapper
+    <FrameWrapper frame={frame} naturalWidth={@state.frameDimensions[src]?.width} naturalHeight={@state.frameDimensions[src]?.height} workflow={@props.workflow} subject={@props.subject} classification={@props.classification} annotation={@props.annotation}>
+      {switch type
+        when 'image'
+          <img className="subject" src={src} style={SUBJECT_STYLE} onLoad={@handleLoad} />
+        when 'video'
+          <video src={src} type={"#{type}/#{format}"} controls onLoad={@handleLoad}>
+            Your browser does not support the video format. Please upgrade your browser.
+          </video>}
+    </FrameWrapper>
 
   hiddenPreloadedImages: ->
     # Render this to ensure that all a subject's location images are cached and ready to display.
