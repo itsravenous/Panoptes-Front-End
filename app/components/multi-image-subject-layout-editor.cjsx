@@ -30,4 +30,4 @@ module.exports = React.createClass
   handleSelectLayout: (e) ->
     layout = e.target.value
     @props.workflow.update
-      'config.multi_image_layout': layout
+      'configuration.multi_image_layout': layout
