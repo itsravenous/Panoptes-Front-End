@@ -5,6 +5,8 @@ alert = require '../lib/alert'
 {Markdown} = require 'markdownz'
 getSubjectLocation = require '../lib/get-subject-location'
 CollectionsManagerIcon = require '../collections/manager-icon'
+workflowAllowsFlipbook = require '../lib/workflow-allows-flipbook'
+workflowAllowsSeparateFrames = require '../lib/workflow-allows-separate-frames'
 
 NOOP = Function.prototype
 
@@ -49,7 +51,7 @@ module.exports = React.createClass
     playing: false
     frame: @props.frame ? 0
     frameDimensions: {}
-    inFlipbookMode: false
+    inFlipbookMode: workflowAllowsFlipbook @props.workflow
     playbackRate: 1
 
   componentDidMount: ->
@@ -95,9 +97,11 @@ module.exports = React.createClass
           null
         else
           <span class="tools">
-            <button className="flipbook-toggle" onClick={@toggleInFlipbookMode}>
-              <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
-            </button>
+            {if workflowAllowsFlipbook(@props.workflow) and workflowAllowsSeparateFrames(@props.workflow)
+              <button className="flipbook-toggle" onClick={@toggleInFlipbookMode}>
+                <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
+              </button>}
+
             {if not @state.inFlipbookMode or @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
               null
             else
