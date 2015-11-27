@@ -280,5 +280,4 @@ module.exports = React.createClass
       loading: false
       frameDimensions: frameDimensions
 
-    console.log frameDimensions
     @props.onLoad? arguments...
