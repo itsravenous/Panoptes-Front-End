@@ -86,22 +86,29 @@ module.exports = React.createClass
       mainDisplay = for frame of @props.subject.locations
         {type, format, src} = getSubjectLocation @props.subject, frame
         @renderFrame type, format, src, frame
->>>>>>> Toggle flipbook mode via @state.inFlipbookMode #1901
 
     tools = switch type
       when 'image'
         if not @state.inFlipbookMode or @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
           null
         else
-          <span className="subject-frame-play-controls">
-            {if @state.playing
-              <button type="button" className="secret-button" aria-label="Pause" onClick={@setPlaying.bind this, false}>
-                <i className="fa fa-pause fa-fw"></i>
-              </button>
+          <span class="tools">
+            <button className="flipbook-toggle" onClick={@toggleInFlipbookMode}>
+              <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
+            </button>
+            {if not @state.inFlipbookMode or @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
+              null
             else
-              <button type="button" className="secret-button" aria-label="Play" onClick={@setPlaying.bind this, true}>
-                <i className="fa fa-play fa-fw"></i>
-              </button>}
+              <span className="subject-frame-play-controls">
+                {if @state.playing
+                  <button type="button" className="secret-button" onClick={@setPlaying.bind this, false}>
+                    <i className="fa fa-pause fa-fw"></i>
+                  </button>
+                else
+                  <button type="button" className="secret-button" onClick={@setPlaying.bind this, true}>
+                    <i className="fa fa-play fa-fw"></i>
+                  </button>}
+              </span>}
           </span>
       when 'video'
         <span className="subject-video-controls">
@@ -127,7 +134,6 @@ module.exports = React.createClass
               </label>
             }
           </span>
-        </span>
 
     <div className="subject-viewer" style={ROOT_STYLE if @props.defaultStyle}>
       {if type is 'image'
@@ -193,6 +199,12 @@ module.exports = React.createClass
         {src} = getSubjectLocation @props.subject, i
         <img key={i} src={src} />}
     </div>
+
+  toggleInFlipbookMode: () ->
+    @setInFlipbookMode not @state.inFlipbookMode
+
+  setInFlipbookMode: (inFlipbookMode) ->
+    @setState {inFlipbookMode}
 
   setPlaying: (playing) ->
     @setState {playing}
