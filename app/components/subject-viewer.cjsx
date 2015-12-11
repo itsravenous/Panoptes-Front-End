@@ -5,8 +5,6 @@ alert = require '../lib/alert'
 {Markdown} = require 'markdownz'
 getSubjectLocation = require '../lib/get-subject-location'
 CollectionsManagerIcon = require '../collections/manager-icon'
-workflowAllowsFlipbook = require '../lib/workflow-allows-flipbook'
-workflowAllowsSeparateFrames = require '../lib/workflow-allows-separate-frames'
 
 NOOP = Function.prototype
 
@@ -45,13 +43,15 @@ module.exports = React.createClass
     project: null
     linkToFullImage: false
     frameWrapper: null
+    allowFlipbook: true
+    allowSeparateFrames: true
 
   getInitialState: ->
     loading: true
     playing: false
     frame: @props.frame ? 0
     frameDimensions: {}
-    inFlipbookMode: workflowAllowsFlipbook @props.workflow
+    inFlipbookMode: @props.allowFlipbook
     playbackRate: 1
 
   componentDidMount: ->
@@ -78,9 +78,15 @@ module.exports = React.createClass
         {frameDisplay}
       </FrameWrapper>
 
+  willReceiveProps: (nextProps) ->
+    # The default state for subjects is flipbook if allowed
+    if typeof nextProps.allowFlipbook is 'boolean'
+      this.setState
+        inFlipbookMode: allowFlipbook
+
   render: ->
     rootClass = 'subject-viewer'
-    if @props.workflow.configuration?.multi_image_layout then rootClass += ' subject-viewer--layout-' + @props.workflow.configuration?.multi_image_layout
+    if @props.workflow?.configuration?.multi_image_layout then rootClass += ' subject-viewer--layout-' + @props.workflow.configuration?.multi_image_layout
     if @state.inFlipbookMode then rootClass += ' subject-viewer--flipbook'
     mainDisplay = ''
     if @state.inFlipbookMode
@@ -97,7 +103,7 @@ module.exports = React.createClass
           null
         else
           <span class="tools">
-            {if workflowAllowsFlipbook(@props.workflow) and workflowAllowsSeparateFrames(@props.workflow)
+            {if @props.allowFlipbook and @props.allowSeparateFrames
               <button className="flipbook-toggle" onClick={@toggleInFlipbookMode}>
                 <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
               </button>}
