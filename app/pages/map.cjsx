@@ -7,15 +7,16 @@ module.exports = React.createClass
   displayName: 'MapPage'
 
   componentDidMount: ->
-    apiClient.type('subjects').get().then (subjects) =>
-      console.log subjects
-      @setState {subjects}
     document.documentElement.classList.add 'on-map-page'
+
+    # Grab some subjects and add to map
+    apiClient.type('subjects').get().then (subjects) =>
+      this.refs.map.setSubjects(subjects)
 
   componentWillUnmount: ->
     document.documentElement.classList.remove 'on-map-page'
 
   render: ->
     <div className="home-page" style={{display: 'flex', flex: 1}}>
-      <MarkingMap />
+      <MarkingMap ref="map" />
     </div>
