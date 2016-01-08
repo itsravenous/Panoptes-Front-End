@@ -14,29 +14,31 @@ module.exports = React.createClass
   setSubjects: (subjects) ->
     console.log 'setSubjects', subjects
     subjects.forEach (subject) =>
-      # @addSubjectMarker subject
+      subject.metadata = subject.metadata || {}
+      subject.metadata.latlngNW = [
+        Math.random() * 90
+        Math.random() * 180
+      ]
+      subject.metadata.latlngSE = [
+        subject.metadata.latlngNW[0] + 1
+        subject.metadata.latlngNW[1] + 3
+      ]
+      subject.metadata.latlngCenter = [
+        subject.metadata.latlngNW[0] + 0.5
+        subject.metadata.latlngNW[1] + 1.5
+      ]
+      @addSubjectMarker subject
       @addSubjectTile subject
 
   addSubjectTile: (subject) ->
-    latlngNW = [
-      Math.random() * 90
-      Math.random() * 180
-    ]
-    latlngSE = [
-      latlngNW[0] + 1
-      latlngNW[1] + 3
-    ]
+
     image = subject.locations[0][Object.keys(subject.locations[0])[0]]
-    L.imageOverlay image, [latlngNW, latlngSE]
+    L.imageOverlay image, [subject.metadata.latlngNW, subject.metadata.latlngSE]
       .addTo @map;
 
   addSubjectMarker: (subject) ->
-    latlng = [
-      Math.random() * 90
-      Math.random() * 180
-    ]
     image = subject.locations[0][Object.keys(subject.locations[0])[0]]
-    L.marker(latlng, MARKER_OPTIONS).addTo(@map).bindPopup('<a href="'+image+'">Image</a>').openPopup();
+    L.marker(subject.metadata.latlngCenter, MARKER_OPTIONS).addTo(@map).bindPopup('<a href="'+image+'">Image</a>').openPopup();
 
   # Lifecycle methods
   componentDidMount: ->
