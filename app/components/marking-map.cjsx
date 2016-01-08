@@ -1,7 +1,12 @@
 React = require 'react'
 ReactDOM = require 'react-dom'
 L = if window.navigator then require 'leaflet' else null
-console.log ReactDOM
+if (L)
+  MARKER_ICON = L.divIcon
+    html: '<svg viewBox="0 0 100 100" width="1em" height="1em" class="zooniverse-logo" data-reactid=".0.1.0.0.0"><use xlink:href="#zooniverse-logo-source" x="0" y="0" width="100" height="100"></use></svg>'
+  MARKER_OPTIONS =
+    icon: MARKER_ICON
+
 module.exports = React.createClass
   displayName: 'MarkingMap'
 
@@ -15,13 +20,9 @@ module.exports = React.createClass
       L.marker([
         51.5
         -0.09
-      ]).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup()
-
-      setTimeout resize 3000
-
-  resize: ->
-    console.log 'resize'
-    @map.invalidateSize()
+      ], MARKER_OPTIONS).addTo(map).bindPopup('A pretty CSS3 popup.<br> Easily customizable.').openPopup()
 
   render: ->
-    <div className="marking-map" style={{display: 'flex'; flex: 1}} />
+    <div className="marking-map" style={{display: 'flex'; flex: 1}}>
+      {@mapDiv}
+    </div>
