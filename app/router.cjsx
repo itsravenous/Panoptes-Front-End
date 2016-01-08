@@ -6,6 +6,8 @@ module.exports =
   <Route path="/" component={require './pages/home'}/>
   <Route path="home" component={require './pages/home'}/>
 
+  <Route path="map" component={require './pages/map'}/>
+
   <Route path="about" component={require './pages/about'} ignoreScrollBehavior>
     <IndexRoute component={require './pages/about/about-home'} />
     <Route path="team" component={require './pages/about/team-page'} />
