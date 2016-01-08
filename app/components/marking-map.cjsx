@@ -14,7 +14,21 @@ module.exports = React.createClass
   setSubjects: (subjects) ->
     console.log 'setSubjects', subjects
     subjects.forEach (subject) =>
-      @addSubjectMarker subject
+      # @addSubjectMarker subject
+      @addSubjectTile subject
+
+  addSubjectTile: (subject) ->
+    latlngNW = [
+      Math.random() * 90
+      Math.random() * 180
+    ]
+    latlngSE = [
+      latlngNW[0] + 1
+      latlngNW[1] + 3
+    ]
+    image = subject.locations[0][Object.keys(subject.locations[0])[0]]
+    L.imageOverlay image, [latlngNW, latlngSE]
+      .addTo @map;
 
   addSubjectMarker: (subject) ->
     latlng = [
