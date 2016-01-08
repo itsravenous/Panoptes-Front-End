@@ -42,8 +42,8 @@ module.exports = React.createClass
   generateSubjectLatLng: (subject) ->
     subject.metadata = subject.metadata || {}
     subject.metadata.latlngNW = [
-      Math.random() * 90
-      Math.random() * 180
+      Math.random() * 90 / 5
+      Math.random() * 180 / 5
     ]
     subject.metadata.latlngSE = [
       subject.metadata.latlngNW[0] + 1
