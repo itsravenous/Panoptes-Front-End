@@ -100,7 +100,10 @@ module.exports = React.createClass
     tools = switch type
       when 'image'
         if not @state.inFlipbookMode or @props.subject?.locations.length < 2 or subjectHasMixedLocationTypes @props.subject
-          null
+          if @props.allowFlipbook and @props.allowSeparateFrames
+            <button className="flipbook-toggle" onClick={@toggleInFlipbookMode}>
+              <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
+            </button>
         else
           <span class="tools">
             {if @props.allowFlipbook and @props.allowSeparateFrames
@@ -146,6 +149,7 @@ module.exports = React.createClass
               </label>
             }
           </span>
+        </span>
 
     <div className={rootClass} style={ROOT_STYLE if @props.defaultStyle}>
       {if type is 'image'
