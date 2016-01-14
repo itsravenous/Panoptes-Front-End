@@ -52,6 +52,21 @@
       .subject-container > *
         width: 33%
 
+  .subject-container
+    > *
+      max-width: 100%;
+
+  // Multi-image layouts
+  &:not(.subject-viewer--flipbook)
+    .subject-container
+      justify-content: space-between
+    &.subject-viewer--layout-grid2
+      .subject-container > *
+        width: 49%
+    &.subject-viewer--layout-grid3
+      .subject-container > *
+        width: 33%
+
 .subject
   .subject-tools
     button:not(:last-child)
