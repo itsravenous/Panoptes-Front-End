@@ -60,24 +60,6 @@ module.exports = React.createClass
   componentDidUpdate: ->
     @refs.videoPlayer?.playbackRate = @state.playbackRate
 
-  render: ->
-    FrameWrapper = @props.frameWrapper
-
-    mainDisplay = for frame of @props.subject.locations
-      {type, format, src} = getSubjectLocation @props.subject, frame
-
-      frameDisplay = switch type
-        when 'image'
-          <img className="subject" src={src} style={SUBJECT_STYLE} onLoad={@handleLoad} />
-        when 'video'
-          <video src={src} type={"#{type}/#{format}"} controls onLoad={@handleLoad}>
-            Your browser does not support the video format. Please upgrade your browser.
-          </video>
-
-      <FrameWrapper frame={frame} naturalWidth={@state.frameDimensions[src]?.width} naturalHeight={@state.frameDimensions[src]?.height} workflow={@props.workflow} subject={@props.subject} classification={@props.classification} annotation={@props.annotation}>
-        {frameDisplay}
-      </FrameWrapper>
-
   willReceiveProps: (nextProps) ->
     # The default state for subjects is flipbook if allowed
     if typeof nextProps.allowFlipbook is 'boolean'
