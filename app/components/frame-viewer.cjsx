@@ -1,10 +1,6 @@
 React = require 'react'
 LoadingIndicator = require '../components/loading-indicator'
-FavoritesButton = require '../collections/favorites-button'
-alert = require '../lib/alert'
-{Markdown} = require 'markdownz'
 getSubjectLocation = require '../lib/get-subject-location'
-CollectionsManagerIcon = require '../collections/manager-icon'
 
 SUBJECT_STYLE = display: 'block'
 NOOP = Function.prototype

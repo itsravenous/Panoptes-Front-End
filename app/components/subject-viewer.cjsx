@@ -1,5 +1,4 @@
 React = require 'react'
-LoadingIndicator = require '../components/loading-indicator'
 FavoritesButton = require '../collections/favorites-button'
 alert = require '../lib/alert'
 {Markdown} = require 'markdownz'
@@ -20,7 +19,6 @@ subjectHasMixedLocationTypes = (subject) ->
 
 ROOT_STYLE = display: 'block'
 CONTAINER_STYLE = display: 'flex', flexWrap: 'wrap', position: 'relative'
-SUBJECT_STYLE = display: 'block'
 
 module.exports = React.createClass
   displayName: 'SubjectViewer'
@@ -136,7 +134,7 @@ module.exports = React.createClass
     </div>
 
   renderFrame: (frame) ->
-    <FrameViewer key={frame} frame={frame} subject={@props.subject} workflow={@props.workflow} classification={@props.classification} onLoad={@props.onLoad}  />
+    <FrameViewer key={frame} frame={frame} subject={@props.subject} workflow={@props.workflow} classification={@props.classification} onLoad={@props.onLoad} frameWrapper={@props.frameWrapper}  />
 
   hiddenPreloadedImages: ->
     # Render this to ensure that all a subject's location images are cached and ready to display.
