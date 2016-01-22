@@ -6,17 +6,17 @@
     .subject-frame-pip
       &.active
         font-weight: 700
-  
+
   video
     width: 100%
-  
+
   .subject-video-controls
     display: inline-block
     width: 30vw
-  
+
   .video-scrubber
     width: 80%
-    
+
   .video-speed
     white-space: nowrap
     display: inline-block
@@ -33,7 +33,7 @@
         left: -50px
         height: 0
         width: 0
-  
+
         &:checked + span
           color: MAIN_HIGHLIGHT
 
@@ -54,7 +54,10 @@
 
   .subject-container
     > *
+      // Restrict media elements (video, image to container width or implicit width, whichever is smallest)
       max-width: 100%;
+      min-width: 0;
+      flex: 1;
 
   // Multi-image layouts
   &:not(.subject-viewer--flipbook)
