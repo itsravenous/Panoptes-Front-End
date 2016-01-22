@@ -89,7 +89,7 @@ module.exports = React.createClass
               <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
             </button>
         else
-          <span class="tools">
+          <span className="tools">
             {if @props.allowFlipbook and @props.allowSeparateFrames
               <button className="flipbook-toggle" onClick={@toggleInFlipbookMode}>
                 <i className={"fa fa-fw " + if @state.inFlipbookMode then "fa-th-large" else "fa-film"}></i>
