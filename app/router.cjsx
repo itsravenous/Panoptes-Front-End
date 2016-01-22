@@ -101,11 +101,14 @@ module.exports =
     <Route path="collaborators" component={require './pages/lab/collaborators'} />
     <Route path="media" component={require './pages/lab/media'} />
     <Route path="workflow/:workflowID" component={require './pages/lab/workflow'} />
+    <Route path="workflow/:workflowID/visualize" component={require './pages/lab/workflow-viewer'} />
+    <Route path="workflow/:workflowID/visualise" component={require './pages/lab/workflow-viewer'} />
     <Route path="subject-set/:subjectSetID" component={require './pages/lab/subject-set'} />
     <Route path="visibility" component={require './pages/lab/visibility'} />
     <Route path="talk" component={require './pages/lab/talk'} />
     <Route path="data-exports" component={require './pages/lab/data-dumps'} />
     <Route path="tutorial" component={require './pages/lab/tutorial'} />
+    <Route path="guide" component={require './pages/lab/field-guide'} />
   </Route>
   <Route path="lab-policies" component={require './pages/lab/lab-policies'} />
   <Route path="lab-how-to" component={require './pages/lab/how-to-page'} />
