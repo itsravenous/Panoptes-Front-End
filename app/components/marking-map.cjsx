@@ -1,65 +1,84 @@
 React = require 'react'
 ReactDOM = require 'react-dom'
+getSubjectLocation = require '../lib/get-subject-location'
 L = if window.navigator then require 'leaflet' else null
+
 if (L)
+  BASE_LAYER = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors')
   MARKER_ICON = L.divIcon
-    html: '<svg viewBox="0 0 100 100" width="1em" height="1em" class="zooniverse-logo" data-reactid=".0.1.0.0.0"><use xlink:href="#zooniverse-logo-source" x="0" y="0" width="100" height="100"></use></svg>'
+    html: '<div style="border-radius: 50% 50%; width: 5px; height: 5px; background:rgba(255, 255, 255, 0.5); border: 5px solid rgba(0, 0, 0, 0.5); background-clip: content-box"></div>'
+    iconSize: [10, 10]
   MARKER_OPTIONS =
     icon: MARKER_ICON
 
 module.exports = React.createClass
   displayName: 'MarkingMap'
 
+  # React lifecycle
+  getInitialState: ->
+    subjects: []
+
   # API methods
   setSubjects: (subjects) ->
+    layers = []
     for subject in subjects
-      subject = @generateSubjectLatLng subject
       @addSubjectMarker subject
-      @addSubjectTile subject
+      for image, idx in @getSubjectImages subject
+        layers[idx] = [] if not layers[idx]
+        layers[idx].push @addSubjectTile subject, idx
 
-    bounds = @getBoundsForSubjects subjects
+    layerGroupsKeyed = {}
+    for i, layer of layers
+      layerGroupsKeyed['layer'+i] = L.layerGroup layer
+
+    L.control.layers({base: BASE_LAYER}, layerGroupsKeyed)
+      .addTo @map
+
+    bounds = @getSubjectSetBounds subjects
     @map.fitBounds bounds
+    @setState {subjects}
 
-  addSubjectTile: (subject) ->
-    image = subject.locations[0][Object.keys(subject.locations[0])[0]]
-    L.imageOverlay image, [subject.metadata.latlngNW, subject.metadata.latlngSE]
-      .addTo @map;
+  addSubjectTile: (subject, imageIdx) ->
+    images = @getSubjectImages subject
+    bounds = @getSubjectBounds subject
+    L.imageOverlay images[imageIdx].src, bounds
 
   addSubjectMarker: (subject) ->
     image = subject.locations[0][Object.keys(subject.locations[0])[0]]
-    L.marker(subject.metadata.latlngCenter, MARKER_OPTIONS).addTo(@map).bindPopup('<a href="'+image+'">Image</a>').openPopup();
+    center = @getSubjectCenter subject
+    L.marker(center, MARKER_OPTIONS)
+      .addTo @map
+      .bindPopup '<a href="'+image+'">Image</a>'
+      .openPopup();
 
   # Private methods
-  getBoundsForSubjects: (subjects) ->
+  getSubjectSetBounds: (subjects) ->
     latlngs = []
-
     for subject in subjects
-      latlngs.push new L.LatLng(subject.metadata.latlngNW[0], subject.metadata.latlngNW[1])
-      latlngs.push new L.LatLng(subject.metadata.latlngSE[0], subject.metadata.latlngSE[1])
+      latlngs.push [subject.metadata.upper_left_lat, subject.metadata.upper_left_lon]
+      latlngs.push [subject.metadata.bottom_right_lat, subject.metadata.bottom_right_lon]
 
     return latlngs
 
-  generateSubjectLatLng: (subject) ->
-    subject.metadata = subject.metadata || {}
-    subject.metadata.latlngNW = [
-      Math.random() * 90 / 5
-      Math.random() * 180 / 5
+  getSubjectBounds: (subject) ->
+    [
+      [subject.metadata.upper_left_lat, subject.metadata.upper_left_lon]
+      [subject.metadata.bottom_right_lat, subject.metadata.bottom_right_lon]
     ]
-    subject.metadata.latlngSE = [
-      subject.metadata.latlngNW[0] + 1
-      subject.metadata.latlngNW[1] + 3
-    ]
-    subject.metadata.latlngCenter = [
-      subject.metadata.latlngNW[0] + 0.5
-      subject.metadata.latlngNW[1] + 1.5
-    ]
-    return subject
+
+  getSubjectCenter: (subject) ->
+    [subject.metadata.center_lat, subject.metadata.center_lon]
+
+  getSubjectImages: (subject) ->
+    images = []
+    images = for frame, location of subject.locations
+      getSubjectLocation subject, frame
 
   # Lifecycle methods
   componentDidMount: ->
     if L
       @map = map = L.map(ReactDOM.findDOMNode this)
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors').addTo map
+      BASE_LAYER.addTo map
 
 
   render: ->
